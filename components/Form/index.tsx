@@ -24,7 +24,7 @@ export default function Form<T extends {}>({ defaultValues, children, onSubmit =
 type Name = { name: string };
 type InputProps = ComponentProps<typeof TextField> & Name;
 
-function Input({ name, type = 'text', ...props }: InputProps) {
+function Input({ name, type = 'text', ...props}: InputProps) {
   const { register } = useFormContext();
   return <TextField type={type} {...register(name)} {...props} />;
 }

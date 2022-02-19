@@ -14,6 +14,7 @@ import {
     Query,
     updateDoc,
     arrayUnion,
+    arrayRemove
   } from '@firebase/firestore';
  
   import { removeEmpty, tryCatcher } from 'utils/functions';
@@ -46,13 +47,22 @@ import {
       query(ref, where('group', '==', group));
   
   // DB FUNCTIONS
+
+  export const addDataToGroup = (id: string, document: Partial<Group>) => modifyDocument('groups', id, document);
+
+  export const addDataToAutoComplete = <T>(id: string, data: T) => tryCatcher(() => updateDoc(doc(db, "autocomplete", id), { options: arrayUnion(data) }));
+  export const removeDataToAutoComplete = <T>(id: string, data: T) => tryCatcher(() => updateDoc(doc(db, "autocomplete", id), { options: arrayRemove(data) }));
+
+  export const getAutoComplete = (id: string) => getDocument<User>('autocomplete', id);
+
+  export const getAllUsers = (group: string) => getCollection<User>('users', groupQuery(group));
   
   export const createUser = (id: string, document: User) => modifyDocument('users', id, document);
   
   export const getUser = (id: string) => getDocument<User>('users', id);
-  
-  export const getAllUsers = (group: string) => getCollection<User>('users', groupQuery(group));
 
   export const getGroup = (id: string) => getDocument<Group>('groups', id);
+
+  export const addDataToUser = (id: string, document: Partial<User>) => modifyDocument('users', id, document);
   
   
