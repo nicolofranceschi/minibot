@@ -1,3 +1,4 @@
+import { useTheme } from "@emotion/react";
 import { Box, Paper, TextField, Typography, Autocomplete, Button } from "@mui/material";
 import { useForm,Controller } from "react-hook-form";
 
@@ -20,22 +21,27 @@ const top100Films = [
 export default function Add() {
 
     const { register, handleSubmit,control, watch, formState: { errors } } = useForm<FormAdd>();
+
+    const theme = useTheme() as any;
+
     const onSubmit = (data: FormAdd) => {
         console.log(data);
     }
 
+    console.log(theme)
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
             <Box sx={{ padding: '1rem', display: 'flex', flexDirection: "column", gap: 1 }}>
-                <Paper elevation={4} sx={{ padding: '1rem', display: 'flex ', gap: 2, flexDirection: "column", borderRadius: '1rem' }}>
+                <Paper elevation={4} sx={{ padding: '1rem', display: 'flex ', gap: 2, flexDirection: "column", borderRadius: '1rem' , border:`2px solid ${theme.palette.warning.main}` }}>
                     <Typography variant="button">Codice articolo</Typography>
                     <TextField id="id" variant="outlined" placeholder="Campo alfanumerico" {...register("codiceArticolo")} />
                 </Paper>
-                <Paper elevation={4} sx={{ padding: '1rem', display: 'flex ', gap: 2, flexDirection: "column", borderRadius: '1rem' }}>
+                <Paper elevation={4} sx={{ padding: '1rem', display: 'flex ', gap: 2, flexDirection: "column", borderRadius: '1rem',border:`2px solid ${theme.palette.success.main}` }}>
                     <Typography variant="button">note</Typography>
                     <TextField multiline rows={6} id="description" variant="outlined" placeholder="Campo alfanumerico" {...register("description")} />
                 </Paper>
-                <Paper elevation={4} sx={{ padding: '1rem', display: 'flex ', gap: 2, flexDirection: "column", borderRadius: '1rem' }}>
+                <Paper elevation={4} sx={{ padding: '1rem', display: 'flex ', gap: 2, flexDirection: "column", borderRadius: '1rem',border:`2px solid ${theme.palette.error.main}` }}>
                     <Typography variant="button">Tipo Finitura</Typography>
                     <Controller
                         name="tipoFinitura"
@@ -53,7 +59,7 @@ export default function Add() {
                         )}
                     />
                 </Paper>
-                <Button type="submit">SALVA</Button>
+                <Button variant="contained" type="submit" sx={{padding: '1rem', display: 'flex' , borderRadius: '1rem'}}>SALVA</Button>
             </Box>
         </form>
     )
