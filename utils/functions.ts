@@ -94,28 +94,16 @@ export const truncate = (str: string, length: number) => (str.length > length ? 
 export const oneHourFromNow = (date: dayjs.Dayjs = dayjs()) => date.add(1, 'hour');
 
 export const timeDifference = (date1?: Date | Firebase.Timestamp, date2?: Date | Firebase.Timestamp) => {
-  const second = dayjs(timestampToDate(date1)).diff(dayjs(timestampToDate(date2)), "second")
-  const minute = Math.floor(second / 60)
-  return minute === 0 ? `${second} Secondi` : minute < 60 ? `${minute} Minuti` : `${Math.floor(minute / 60)} ore e ${minute % 60} `
-}
+  const second = dayjs(timestampToDate(date1)).diff(dayjs(timestampToDate(date2)), 'second');
+  const minute = Math.floor(second / 60);
+  return minute === 0 ? `${second} Secondi` : minute < 60 ? `${minute} Minuti` : `${Math.floor(minute / 60)} ore e ${minute % 60} `;
+};
 
 export const timeDifferenceToSecond = (date1?: Date | Firebase.Timestamp, date2?: Date | Firebase.Timestamp) => {
-  return dayjs(timestampToDate(date1)).diff(dayjs(timestampToDate(date2)), "second")
-}
+  return dayjs(timestampToDate(date1)).diff(dayjs(timestampToDate(date2)), 'second');
+};
 
 export const secondToTime = (second: number) => {
-  const minute = Math.floor(second / 60)
-  return minute === 0 ? `${second} Secondi` : minute < 60 ? `${minute} Minuti` : `${Math.floor(minute / 60)} ore e ${minute % 60} `
-}
-
-export const IsInt = (x: any) => {
-
-  if (typeof x == 'number' && !Number.isNaN(x)) {
-
-    if (!Number.isInteger(x)) {
-      return `${x} non è intero`
-    }
-  } else {
-    return `${x} non è un numero`
-  }
-}
+  const minute = Math.floor(second / 60);
+  return minute === 0 ? `${second} Secondi` : minute < 60 ? `${minute} Minuti` : `${Math.floor(minute / 60)} ore e ${minute % 60} `;
+};
