@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { toolAnimation, infoAnimation, nameAnimation } from './animation';
 import { compressFile } from 'utils/functions';
+import { FilesProps } from './useFiles';
 
 
 const thumb = {
@@ -17,9 +18,10 @@ const thumb = {
   height: '100%',
 };
 
-export default function FileBlock({ files, addFiles, removeFiles, changeName }: any) {
+export default function FileBlock({ files = [], addFiles, removeFiles, changeName }: FilesProps) {
+  
   const [selected, setSelected] = useState<number[]>([]);
-  const firstSelectedFile = files[selected[0]];
+  const firstSelectedFile =files[selected[0]];
 
   const [name, setName] = useState<string>('');
 

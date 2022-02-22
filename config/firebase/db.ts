@@ -16,6 +16,7 @@ import {
     arrayUnion,
     arrayRemove
   } from '@firebase/firestore';
+import { Form } from 'config/schema';
  
   import { removeEmpty, tryCatcher } from 'utils/functions';
   
@@ -58,6 +59,10 @@ import {
   export const getAllUsers = (group: string) => getCollection<User>('users', groupQuery(group));
   
   export const createUser = (id: string, document: User) => modifyDocument('users', id, document);
+
+  export const createScheda = (document: Form) => createDocument('schede', document);
+
+  export const addDataToScheda = (id: string, document: any) => modifyDocument('schede', id, document);
   
   export const getUser = (id: string) => getDocument<User>('users', id);
 
