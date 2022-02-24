@@ -16,6 +16,7 @@
     "@mui/lab": "^5.0.0-alpha.69",
     "@mui/material": "^5.4.2",
     "@mui/styles": "^5.4.2",
+    "algoliasearch": "^4.12.1",
     "compressorjs": "^1.1.1",
     "dayjs": "^1.10.7",
     "firebase": "^9.6.7",
