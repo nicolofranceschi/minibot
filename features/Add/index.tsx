@@ -1,4 +1,4 @@
-import { TextField, Button, Checkbox, CircularProgress, Backdrop } from '@mui/material';
+import { TextField, Button, Checkbox, CircularProgress, Backdrop, Stack } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { ErrorBox } from './ErrorBox';
@@ -24,11 +24,13 @@ export default function Add() {
     resolver: aggregateResolvers(warningsResolver, errorsResolver),
   });
 
+  console.log(warnings, errors)
+
   const { carica, percent, isLoading } = useUpload();
 
   const onSubmit = async (data: AddBody) => {
-    if (Object.values(warnings).length === 0) return;
     carica({ data, files: filesProps.files });
+    console.log("daata",data)
   };
 
   return (
@@ -36,58 +38,58 @@ export default function Add() {
       <Backdrop sx={{ color: '#fff', zIndex: 100 }} open={isLoading}>
         <CircularProgress color='inherit' />
       </Backdrop>
-      <ErrorBox label='Codice articolo' error={warnings.codiceArticolo?.message}>
-        <TextField id='id' variant='outlined' placeholder='Campo alfanumerico' {...register('codiceArticolo')} />
-      </ErrorBox>
-      <ErrorBox label='Note' error={warnings.description?.message}>
-        <TextField multiline rows={6} id='description' variant='outlined' placeholder='Campo alfanumerico' {...register('description')} />
-      </ErrorBox>
-      <ErrorBox label='Tipo Finitura' error={warnings.tipoFinitura?.message}>
-        <ControlledAutocomplete {...{ control, options: top100Films, label: 'Seleziona Tipo Finitura', name: 'tipofinitura' }} />
-      </ErrorBox>
-      <ErrorBox label='Tipo Punto Maglia' error={warnings.puntomaglia?.message}>
-        <ControlledAutocomplete {...{ control, options: top100Films, label: 'Seleziona Tipo Punto Maglia', name: 'puntomaglia' }} />
-      </ErrorBox>
-      <ErrorBox label='Altezza finita' error={warnings.altezzafinita?.message}>
-        <TextField
-          id='altezzafinita'
-          variant='outlined'
-          type='number'
-          placeholder='Numero da 1 a 50'
-          {...register('altezzafinita', {
-            valueAsNumber: true,
-          })}
-        />
-      </ErrorBox>
-      <ErrorBox label='Numero fili' error={warnings.numerofili?.message}>
-        <TextField
-          id='numerofili'
-          variant='outlined'
-          type='number'
-          placeholder='Numero intero da 1 a 10'
-          {...register('numerofili', {
-            valueAsNumber: true,
-          })}
-        />
-      </ErrorBox>
-      <ErrorBox label='Rigato'>
-        <Controller
-          name='rigato'
-          control={control}
-          render={({ field }) => <FormControlLabel control={<Checkbox checked={field.value ?? false} onChange={(_, value) => field.onChange({ target: { value } })} />} label='SI/NO' />}
-        />
-      </ErrorBox>
-      <ErrorBox label='Tipo Maglia' error={warnings.tipomaglia?.message}>
-        <ControlledAutocomplete {...{ control, options: top100Films, label: 'Seleziona Tipo Maglia', name: 'tipomaglia' }} />
-      </ErrorBox>
-      <ErrorBox label='Scheda di lavorazione' error={warnings.schedadilavorazione?.message}>
-        <TextField id='schedadilavorazione' variant='outlined' placeholder='4 cifre' {...register('schedadilavorazione')} />
-      </ErrorBox>
-      <ErrorBox label='Filato' error={warnings.filato?.message}>
-        <ControlledAutocomplete {...{ control, options: top100Films, label: 'Seleziona Tipo filato', name: 'filato' }} />
-      </ErrorBox>
+      <Stack direction="row" sx={{flexWrap:"wrap" , gap: 1 }}>
+        <ErrorBox label='Codice articolo' error={errors.codiceArticolo?.message} warnings={warnings.codiceArticolo?.message}>
+          <TextField id='id' variant='outlined' placeholder='Campo alfanumerico' {...register('codiceArticolo')} />
+        </ErrorBox>
+        <ErrorBox label='Note' error={errors.description?.message} warnings={warnings.description?.message}>
+          <TextField multiline rows={6} id='description' variant='outlined' placeholder='Campo alfanumerico' {...register('description')} />
+        </ErrorBox>
+        <ErrorBox label='Tipo Finitura' error={errors.tipofinitura?.message} warnings={warnings.tipofinitura?.message}>
+          <ControlledAutocomplete {...{ control, options: top100Films, label: 'Seleziona Tipo Finitura', name: 'tipofinitura' }} />
+        </ErrorBox>
+        <ErrorBox label='Tipo Punto Maglia' error={errors.puntomaglia?.message} warnings={warnings.puntomaglia?.message}>
+          <ControlledAutocomplete {...{ control, options: top100Films, label: 'Seleziona Tipo Punto Maglia', name: 'puntomaglia' }} />
+        </ErrorBox>
+        <ErrorBox label='Altezza finita' error={errors.altezzafinita?.message} warnings={warnings.altezzafinita?.message}>
+          <TextField
+            id='altezzafinita'
+            variant='outlined'
+            type='number'
+            placeholder='Numero da 1 a 50'
+            {...register('altezzafinita', {
+              valueAsNumber: true,
+            })}
+          />
+        </ErrorBox>
+        <ErrorBox label='Numero fili' error={errors.numerofili?.message} warnings={warnings.numerofili?.message}>
+          <TextField
+            id='numerofili'
+            variant='outlined'
+            type='number'
+            placeholder='Numero intero da 1 a 10'
+            {...register('numerofili')}
+          />
+        </ErrorBox>
+        <ErrorBox label='Rigato'>
+          <Controller
+            name='rigato'
+            control={control}
+            render={({ field }) => <FormControlLabel control={<Checkbox checked={field.value ?? false} onChange={(_, value) => field.onChange({ target: { value } })} />} label='SI/NO' />}
+          />
+        </ErrorBox>
+        <ErrorBox label='Tipo Maglia' error={errors.tipomaglia?.message} warnings={warnings.tipomaglia?.message}>
+          <ControlledAutocomplete {...{ control, options: top100Films, label: 'Seleziona Tipo Maglia', name: 'tipomaglia' }} />
+        </ErrorBox>
+        <ErrorBox label='Scheda di lavorazione' error={errors.schedadilavorazione?.message} warnings={warnings.schedadilavorazione?.message}>
+          <TextField id='schedadilavorazione' variant='outlined' placeholder='4 cifre' {...register('schedadilavorazione')} />
+        </ErrorBox>
+        <ErrorBox label='Filato' error={errors.filato?.message} warnings={warnings.filato?.message}>
+          <ControlledAutocomplete {...{ control, options: top100Films, label: 'Seleziona Tipo filato', name: 'filato' }} />
+        </ErrorBox>
+      </Stack>
       <FileBlock {...filesProps} />
-      <Button variant='contained' type='submit' sx={{ padding: '1rem', display: 'flex', borderRadius: '1rem' }}>
+      <Button variant='contained' type='submit' sx={{ padding: '1rem', width: 'calc(100% - 70px)', borderRadius: '1rem' }}>
         SALVA
       </Button>
     </form>

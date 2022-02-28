@@ -31,6 +31,6 @@ export const infoAnimation = {
   visible: {
     opacity: 1,
     display: 'block',
-    height: '100%',
+    height: '100%'
   },
 };

@@ -107,3 +107,36 @@ export const secondToTime = (second: number) => {
   const minute = Math.floor(second / 60);
   return minute === 0 ? `${second} Secondi` : minute < 60 ? `${minute} Minuti` : `${Math.floor(minute / 60)} ore e ${minute % 60} `;
 };
+
+export const isPdf = async ( url : string ) => { 
+
+  try {
+    const result = await fetch(url)
+    const blob = await result.blob()
+
+    return blob.type.startsWith("application") ? blob.type.split("/")[1] : false
+    
+  } catch (error) {
+
+    console.log(error)
+    
+  }
+ 
+}
+
+export const linkToBlob = async (files:{url:string, name?: string}[]) => { 
+
+  try {
+    
+    const promise = files.map(file => fetch(file.url).then(r => r.blob()).then(blob => blob.arrayBuffer()))
+    const resultPromise = await Promise.all(promise)
+   
+    return resultPromise
+    
+  } catch (error) {
+
+    console.log(error)
+    
+  }
+ 
+}

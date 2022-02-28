@@ -29,7 +29,7 @@ export const RootStyle = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const ContentStyle = styled('div')(({ theme }) => ({
+export const ContentStyle = styled(Box)(({ theme }) => ({
   maxWidth: 480,
   margin: 'auto',
   display: 'flex',
@@ -39,7 +39,7 @@ export const ContentStyle = styled('div')(({ theme }) => ({
   padding: theme.spacing(12, 0),
 }));
 
-const HeaderStyle = styled('header')(({ theme }) => ({
+const HeaderStyle = styled(Box)(({ theme }) => ({
   top: 0,
   zIndex: 9,
   lineHeight: 0,

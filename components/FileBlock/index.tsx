@@ -3,9 +3,9 @@ import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
-import OpenWithIcon  from '@mui/icons-material/OpenWith';
+import OpenWithIcon from '@mui/icons-material/OpenWith';
 import CheckIcon from '@mui/icons-material/Check';
-import BackupIcon  from '@mui/icons-material/Backup';
+import BackupIcon from '@mui/icons-material/Backup';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { toolAnimation, infoAnimation, nameAnimation } from './animation';
@@ -19,9 +19,9 @@ const thumb = {
 };
 
 export default function FileBlock({ files = [], addFiles, removeFiles, changeName }: FilesProps) {
-  
+
   const [selected, setSelected] = useState<number[]>([]);
-  const firstSelectedFile =files[selected[0]];
+  const firstSelectedFile = files[selected[0]];
 
   const [name, setName] = useState<string>('');
 
@@ -34,7 +34,7 @@ export default function FileBlock({ files = [], addFiles, removeFiles, changeNam
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       const files = await Promise.all(
-       
+
         acceptedFiles.map(async file => ({
           file: !file.type.startsWith('image') ? file : await compressFile(file),
           preview: URL.createObjectURL(file),
@@ -73,10 +73,10 @@ export default function FileBlock({ files = [], addFiles, removeFiles, changeNam
   };
 
   return (
-
+    <Paper sx={{borderRadius: '1rem'}}>
       <Box sx={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'column', position: 'relative' }}>
         <motion.div initial='hidden' animate={files.length > 0 ? 'visible' : 'hidden'} variants={toolAnimation}>
-          <Stack flexDirection='row' sx={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '1rem' }}>
+          <Stack flexDirection='row' sx={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '1rem' }}>
             <motion.div initial='hidden' animate={selected.length === 1 ? 'visible' : 'hidden'} variants={nameAnimation}>
               <Stack flexDirection='row' sx={{ alignItems: 'center', justifyContent: 'flex-start', borderRadius: '20px' }}>
                 <InputBase
@@ -100,10 +100,10 @@ export default function FileBlock({ files = [], addFiles, removeFiles, changeNam
             </Stack>
           </Stack>
         </motion.div>
-        <Paper {...getRootProps()} style={{ overflowY: 'auto', height: '100%', borderRadius: '20px', padding: '1rem', width: '100%', backgroundColor: isDragActive ? '#cfe8fc' : '#f5f7ff' }}>
+        <Paper {...getRootProps()} style={{ overflowY: 'auto', height:"300px", borderRadius: '20px', padding: '1rem', width: '100%', backgroundColor: isDragActive ? '#cfe8fc' : '#f5f7ff' }}>
           <motion.div initial='visible' animate={files.length > 0 ? 'hidden' : 'visible'} variants={infoAnimation}>
             <Box sx={{ display: 'flex', gap: 4, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-              <BackupIcon />
+              <BackupIcon sx={{fill:'#1664C0'}} />
               <Typography color='#1664C0' sx={{ padding: '1rem', textAlign: 'center' }}>
                 Clicca per fare Fotografia o per inserire File
               </Typography>
@@ -111,7 +111,7 @@ export default function FileBlock({ files = [], addFiles, removeFiles, changeNam
           </motion.div>
           <Grid container spacing={3}>
             {files.map((file, i) => (
-              <Grid item key={i} xs={4} sx={thumb} onClick={(e)=>{e.stopPropagation();handleClick(i)}}>
+              <Grid item key={i} xs={4} sx={thumb} onClick={(e) => { e.stopPropagation(); handleClick(i) }}>
                 <Paper
                   elevation={selected.some(elm => elm == i) ? 10 : 1}
                   sx={{
@@ -146,5 +146,6 @@ export default function FileBlock({ files = [], addFiles, removeFiles, changeNam
           <Box sx={{ overflow: 'auto', height: '90vh' }}>{openImage && <img style={{ height: '100%' }} src={openImage.preview} alt='Preview image'></img>}</Box>
         </Dialog>
       </Box>
+    </Paper>
   );
 }

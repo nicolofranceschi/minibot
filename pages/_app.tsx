@@ -11,9 +11,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { useState } from 'react';
+import { Fragment} from 'react';
+import '@react-pdf-viewer/core/lib/styles/index.css';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon, Box, CssBaseline } from '@mui/material';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { useLocalStorage } from 'hooks/useLocalStorage';
+import { Worker } from '@react-pdf-viewer/core';
 
 const lightTheme = createTheme({
   palette: {
@@ -36,11 +39,12 @@ const queryClient = new QueryClient({
 });
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  const [darkMode, setDarkMode] = useState(false);
+
+  const [darkMode, setDarkMode] = useLocalStorage("dark", false)
   const router = useRouter();
 
   return (
-    <>
+    <Fragment>
       <Head>
         <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
       </Head>
@@ -49,20 +53,21 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <CssBaseline />
           <AuthProvider>
             <Box>
-              <Component {...pageProps} />
-              <SpeedDial ariaLabel='SpeedDial basic example' sx={{ position: 'fixed', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
-                <SpeedDialAction key={'add'} icon={<AddIcon />} tooltipTitle={'Nuovo elemento'} onClick={() => router.push('/')} />
-                <SpeedDialAction key={'search'} icon={<SearchIcon />} tooltipTitle={'Cerca elemento'} />
-                <SpeedDialAction key={'user'} icon={<AccountCircleIcon />} tooltipTitle={'Gestione utenti'} onClick={() => router.push('/user')} />
-                <SpeedDialAction key={'DarkMode'} icon={<DarkModeIcon />} tooltipTitle={'Dark Mode'} onClick={() => setDarkMode(e => !e)} />
-              </SpeedDial>
+              
+                <Component {...pageProps} />
+                <SpeedDial ariaLabel='SpeedDial basic example' sx={{ position: 'fixed', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
+                  <SpeedDialAction key={'add'} icon={<AddIcon />} tooltipTitle={'Nuovo elemento'} onClick={() => router.push('/')} />
+                  <SpeedDialAction key={'search'} icon={<SearchIcon />} tooltipTitle={'Cerca elemento'} onClick={() => router.push('/search')} />
+                  <SpeedDialAction key={'user'} icon={<AccountCircleIcon />} tooltipTitle={'Gestione utenti'} onClick={() => router.push('/user')} />
+                  <SpeedDialAction key={'DarkMode'} icon={<DarkModeIcon />} tooltipTitle={'Dark Mode'} onClick={() => setDarkMode((e: boolean) => !e)} />
+                </SpeedDial>
+              
             </Box>
           </AuthProvider>
-
           <Toaster />
         </ThemeProvider>
         <ReactQueryDevtools />
       </QueryClientProvider>
-    </>
+    </Fragment>
   );
 }
