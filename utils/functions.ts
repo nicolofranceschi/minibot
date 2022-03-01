@@ -70,7 +70,7 @@ export function hexToRgba(hex: any) {
 
 export const compressFile = async (file: File): Promise<Blob> =>
   new Promise((success, error) => {
-    new Compressor(file, { quality: 0.1, success, error });
+    new Compressor(file, { quality: 0.4, success, error });
   });
 
 export const findById = <T extends { id: string }>(array: T[], id: string) => array.find(item => item.id === id);
@@ -108,35 +108,13 @@ export const secondToTime = (second: number) => {
   return minute === 0 ? `${second} Secondi` : minute < 60 ? `${minute} Minuti` : `${Math.floor(minute / 60)} ore e ${minute % 60} `;
 };
 
-export const isPdf = async ( url : string ) => { 
-
+export const isPdf = async (url: string) => {
   try {
-    const result = await fetch(url)
-    const blob = await result.blob()
+    const result = await fetch(url);
+    const blob = await result.blob();
 
-    return blob.type.startsWith("application") ? blob.type.split("/")[1] : false
-    
+    return blob.type.startsWith('application') ? blob.type.split('/')[1] : false;
   } catch (error) {
-
-    console.log(error)
-    
+    console.log(error);
   }
- 
-}
-
-export const linkToBlob = async (files:{url:string, name?: string}[]) => { 
-
-  try {
-    
-    const promise = files.map(file => fetch(file.url).then(r => r.blob()).then(blob => blob.arrayBuffer()))
-    const resultPromise = await Promise.all(promise)
-   
-    return resultPromise
-    
-  } catch (error) {
-
-    console.log(error)
-    
-  }
- 
-}
+};

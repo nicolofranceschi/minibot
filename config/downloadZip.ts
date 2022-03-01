@@ -1,6 +1,4 @@
-
-export default async function dowloadZip(files:any) {
-  console.log(files);
+export default async function dowloadZip(files: any) {
   const response = await fetch('/api/dowload', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
