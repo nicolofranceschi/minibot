@@ -2,7 +2,9 @@ import { getDownloadURL } from '@firebase/storage';
 import { addDataToScheda, createScheda } from 'config/firebase/db';
 import { upload } from 'config/firebase/storage';
 import { AddBody } from 'features/Add/schema';
+import { Router, useRouter } from 'next/router';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useMutation } from 'react-query';
 
 interface FileArray {
@@ -11,6 +13,9 @@ interface FileArray {
 }
 
 export const useUpload = () => {
+
+  const router = useRouter()
+
   const [percent, setPercent] = useState<number>(0);
   const saveFile = useMutation(({ files, name }: { files: PreviewableFile[]; name: string }) => Promise.all(files.map(({ file }, i) => upload({ file, name: name + '/' + i, setPercent }))));
   const getUrl = useMutation((res: Awaited<ReturnType<typeof upload>>[]) => Promise.all(res.map(metadata => getDownloadURL(metadata.ref))));
@@ -33,7 +38,10 @@ export const useUpload = () => {
                   addUrlToEvent.mutate(
                     { id: data.id ?? '', data: fileArray },
                     {
-                      onSuccess: res => console.log('finito'),
+                      onSuccess: () => {
+                        toast.success("Scheda Aggiunta");
+                        router.reload();
+                      }
                     },
                   );
                 },

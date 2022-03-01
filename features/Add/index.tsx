@@ -8,6 +8,7 @@ import useResolver, { aggregateResolvers } from 'hooks/useResolver';
 import useFiles from 'components/FileBlock/useFiles';
 import { AddBody, errorsSchema, warningsSchema } from 'features/Add/schema';
 import { useUpload } from './useUpload';
+import { useRouter } from 'next/router';
 
 const formStyle = { padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' } as const;
 
@@ -19,18 +20,18 @@ export default function Add() {
 
   const { filesProps } = useFiles();
 
-  const { register, handleSubmit, control } = useForm<AddBody>({
+  const router = useRouter()
+
+  const { register, handleSubmit, control , reset } = useForm<AddBody>({
     mode: 'onChange',
     resolver: aggregateResolvers(warningsResolver, errorsResolver),
   });
 
-  console.log(warnings, errors)
-
-  const { carica, percent, isLoading } = useUpload();
+  const { carica, isLoading } = useUpload();
 
   const onSubmit = async (data: AddBody) => {
     carica({ data, files: filesProps.files });
-    console.log("daata",data)
+    
   };
 
   return (
@@ -38,7 +39,7 @@ export default function Add() {
       <Backdrop sx={{ color: '#fff', zIndex: 100 }} open={isLoading}>
         <CircularProgress color='inherit' />
       </Backdrop>
-      <Stack direction="row" sx={{flexWrap:"wrap" , gap: 1 }}>
+      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
         <ErrorBox label='Codice articolo' error={errors.codiceArticolo?.message} warnings={warnings.codiceArticolo?.message}>
           <TextField id='id' variant='outlined' placeholder='Campo alfanumerico' {...register('codiceArticolo')} />
         </ErrorBox>
