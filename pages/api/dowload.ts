@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 export default async function createQr(req: NextApiRequest, res: NextApiResponse) {
   try {
     // TODO: mettere i controlli sul tipo
-    const promises = req.body.map(file =>
+    const promises = req.body.map((file : any) =>
       fetch(file.url)
         .then(r => r.blob())
         .then(async r => ({ file: await r.arrayBuffer(), name: file.name, type: r.type.split('/')[1] })),
