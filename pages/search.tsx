@@ -2,13 +2,17 @@ import { useMutation, useQuery } from 'react-query';
 import algolia from 'config/algolia';
 import { Fragment, useEffect, useState } from 'react';
 import useDebounce from 'hooks/useDebounce';
-import { Box, Button, InputAdornment, Paper, TextField, Backdrop, CircularProgress, Typography, IconButton, Stack } from '@mui/material';
+import { Box, Button, InputAdornment, Paper, TextField, Backdrop, CircularProgress, Typography, IconButton, Stack, Chip, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { AddBody } from 'features/Add/schema';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { isPdf } from 'utils/functions';
 import downloadZip from 'config/downloadZip';
+import useOffset from 'hooks/useOffset';
+import { motion } from 'framer-motion';
+import AddIcon from '@mui/icons-material/Add';
+import InfoIcon from '@mui/icons-material/Info';
 
 interface ItemType extends AddBody {
   files: { url: string; name?: string }[];
@@ -17,12 +21,13 @@ interface ItemType extends AddBody {
 const stringFields = ['codiceArticolo', 'description', 'filato', 'puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
 const numericFields = ['altezzafinita', 'numerofili'];
 
-const propertyRegex = `(NOT\\s)?((${stringFields.join('|')}):\\w+|(${numericFields.join('|')})=[0-9]+)`;
+const propertyRegex = `(NOT\\s)?((${stringFields.join('|')}):\\w+|(${numericFields.join('|')})( = | != | > | >= | < | <= )[0-9]+)`;
 const filterRegex = `${propertyRegex}(\\s(OR|AND)\\s${propertyRegex})*`;
 
 export default function Search() {
   const [input, setInput] = useState('');
   const [filter, setFilter] = useState('');
+  const [validQuery, setValidQuery] = useState('');
   const match = filter.match(new RegExp(filterRegex, 'g'));
   const isError = !match || match.length !== 1 || match[0] !== filter;
 
@@ -31,7 +36,7 @@ export default function Search() {
   const download = useMutation(downloadZip);
 
   const debouncedQuery = useDebounce(input);
-  const { data, isLoading } = useQuery(['search', debouncedQuery], () => algolia.search(debouncedQuery), {
+  const { data, isLoading } = useQuery(['search', debouncedQuery, validQuery], () => algolia.search(debouncedQuery, { filters: validQuery }), {
     select: ({ hits }: any) => hits,
     onSuccess: hits => console.log(hits),
   });
@@ -42,6 +47,8 @@ export default function Search() {
     });
   };
 
+  const { ref, offset } = useOffset();
+
   return (
     <Box sx={{ padding: '1rem' }}>
       <Backdrop sx={{ color: '#fff', zIndex: 100 }} open={isLoading}>
@@ -49,8 +56,8 @@ export default function Search() {
       </Backdrop>
       {!details && (
         <Fragment>
-          <Box sx={{ position: 'fixed', width: '100%', top: 0, left: 0, padding: '1rem', backdropFilter: 'blur(10px)' }}>
-            <Paper sx={{ padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+          <Box sx={{ position: 'fixed', width: '100%', top: 0, left: 0, padding: '1rem', backdropFilter: 'blur(10px)', overflow: "hidden" }}>
+            <Paper sx={{ padding: '1rem', borderRadius: '1rem', display: 'flex', gap: 2, flexDirection: 'column' }}>
               <TextField
                 fullWidth
                 InputProps={{
@@ -64,26 +71,44 @@ export default function Search() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
               />
-              <Button sx={{ padding: '1rem' }} variant='contained'>
-                <FilterListIcon />
-              </Button>
+              <Box sx={{ overflow: 'hidden', width: "100%", borderRadius: '1rem' }}>
+                <motion.div drag='x' dragConstraints={{ right: 0, left: -offset, }}>
+                  <Stack flexDirection='row' ref={ref} alignItems='flex-start' sx={{ gap: 1 }}>
+                    {stringFields.map(field => (
+                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field))} deleteIcon={<AddIcon />} />
+                    ))}
+                    {numericFields.map(field => (
+                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field))} deleteIcon={<AddIcon />} />
+                    ))}
+                  </Stack>
+                </motion.div>
+              </Box>
+              <TextField
+                fullWidth
+                placeholder='QUERY'
+                value={filter}
+                onChange={e => setFilter(e.target.value)}
+              />
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" alignItems="center" sx={{ gap: 0.5 }}>
+                  <Tooltip title={
+                    <Fragment>
+                      <Typography variant="button" sx={{ fontSize: 10 }} >PARAMETER SYNTAX</Typography>
+                      <Typography variant="body2" sx={{ fontSize: 10 }} >attribute:value [AND | OR | NOT] attribute:value</Typography>
+                      <Typography variant="body2" sx={{ fontSize: 10 }} >{"numeric_attribute [= | != | > | >= | < | <=] numeric_value"}</Typography>
+                    </Fragment>
+                  }>
+                    <IconButton >
+                      <InfoIcon sx={{ height: "15px", width: "15px" }} />
+                    </IconButton>
+                  </Tooltip>
+                  {isError ? <span style={{ color: 'red' }}>La query è sbagliata</span> : <span style={{ color: 'green' }}>Ok !</span>}
+                </Stack>
+                <Button disabled={isError} onClick={() => setValidQuery(filter)}>FILTRA</Button>
+              </Stack>
             </Paper>
-            <TextField
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              placeholder='Cerca'
-              value={filter}
-              onChange={e => setFilter(e.target.value)}
-            />
-            {isError && <span style={{ color: 'red' }}>Non va bene</span>}
           </Box>
-          <Paper sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2, mt: '120px', width: '100%' }}></Paper>
+          <Paper sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2, mt: '260px', width: '100%' }}></Paper>
           <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2, mt: '1rem' }}>
             {data &&
               data.map(
@@ -111,9 +136,10 @@ export default function Search() {
               <File url={file.url} name={file.name} key={i} />
             ))}
           </Stack>
-          <Button onClick={() => downloadFiles(details.files)} variant='contained' sx={{ mt: 1, padding: '1rem' }}>
-            scarica
-          </Button>
+          {details.files.length > 0 && (
+            <Button onClick={() => downloadFiles(details.files)} variant='contained' sx={{ mt: 2, padding: '2rem' }}>
+              scarica
+            </Button>)}
         </Box>
       )}
     </Box>
@@ -140,14 +166,14 @@ const File = ({ url, name }: { url: string; name?: string }) => {
   }, [url]);
 
   return (
-    <Paper sx={{ borderRadius: '1rem', flexGrow: 1, height: '30vh', width: 300 }} onClick={() => window.open(url, '_blank')}>
-      <Typography>{name}</Typography>
+    <Paper elevation={4} sx={{ borderRadius: '1rem', flexGrow: 1, height: '30vh', width: 300, maxWidth: 400, display: 'flex', flexDirection: 'column' }} onClick={() => window.open(url, '_blank')}>
+      <Typography sx={{ padding: '1rem' }} variant="button">{name ?? "Unknown"}</Typography>
       {pdf ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', flexGrow: 1 }}>
           <Typography variant='h4'>{pdf}</Typography>
         </Box>
       ) : (
-        <Box sx={{ borderRadius: '1rem', backgroundImage: `url(${url})`, backgroundSize: 'cover', height: '100%', width: '100%' }} />
+        <Box sx={{ borderRadius: '1rem', backgroundImage: `url(${url})`, backgroundSize: 'cover', width: '100%', flexGrow: 1 }} />
       )}
     </Paper>
   );
