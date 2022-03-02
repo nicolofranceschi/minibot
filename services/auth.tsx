@@ -5,6 +5,7 @@ import * as db from 'config/firebase/db';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useMutation } from 'react-query';
 import toast from 'react-hot-toast';
+import Loading from 'components/Loading';
 
 type LoginProps = { email: string; password: string };
 type SignupProps = { name: string; email: string; password: string , notes: string , group: string };
@@ -71,5 +72,5 @@ export function AuthProvider({ children }: ChildrenProps) {
     [user, login, signup, logout, reset],
   );
 
-  return <AuthContext.Provider value={value}>{user ? user.status === 'WAITING' ? <Waiting /> : children : isLoading ? <Waiting /> : <Auth />}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{user ? user.status === 'WAITING' ? <Waiting /> : children : isLoading ? <Loading /> : <Auth />}</AuthContext.Provider>;
 }

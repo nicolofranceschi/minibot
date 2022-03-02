@@ -2,13 +2,10 @@
 import Settings from 'features/Settings'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useRouter } from 'next/router';
 
 
 const User: NextPage = () => {
 
-  
-  
   return (
     <div>
       <Head>
