@@ -74,11 +74,14 @@ export default function Search() {
               <Box sx={{ overflow: 'hidden', width: "100%", borderRadius: '1rem' }}>
                 <motion.div drag='x' dragConstraints={{ right: 0, left: -offset, }}>
                   <Stack flexDirection='row' ref={ref} alignItems='flex-start' sx={{ gap: 1 }}>
+                    <Chip label="AND" onDelete={() => setFilter(e => e.concat(" AND "))} deleteIcon={<AddIcon />} />
+                    <Chip label="OR" onDelete={() => setFilter(e => e.concat(" OR "))} deleteIcon={<AddIcon />} />
+                    <Chip label="NOT" onDelete={() => setFilter(e => e.concat(" NOT "))} deleteIcon={<AddIcon />} />
                     {stringFields.map(field => (
-                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field))} deleteIcon={<AddIcon />} />
+                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field + ":"))} deleteIcon={<AddIcon />} />
                     ))}
                     {numericFields.map(field => (
-                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field))} deleteIcon={<AddIcon />} />
+                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field + " = "))} deleteIcon={<AddIcon />} />
                     ))}
                   </Stack>
                 </motion.div>

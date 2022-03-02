@@ -1,7 +1,9 @@
-import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
+import { Autocomplete, createFilterOptions, TextField, Typography, IconButton } from '@mui/material';
 import { Control, Controller } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { addDataToAutoCompletes, getAutoCompletes, removeDataToAutoCompletes } from 'config/firebase/db';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useAuth } from 'services/auth';
 
 const filter = createFilterOptions();
 const QUERY_KEY = 'getAutoCompletes';
@@ -16,6 +18,8 @@ const isNew = (s: string) => s.startsWith(ADD_LABEL);
 
 export default function ControlledAutocomplete({ control, name, label }: { control: Control<any>; options: string[]; label: string; name: string }) {
   const selectAutocompleteFromDB = ({ data }: Ret) => data?.find(o => o.id === name)?.options ?? [];
+
+  const { user } = useAuth();
 
   const queryClient = useQueryClient();
   const mutationOptions = (fn: ArrayFunction) => ({
@@ -49,9 +53,11 @@ export default function ControlledAutocomplete({ control, name, label }: { contr
           onChange={(_, newValue) => {
             if (!newValue) onChange({ target: { value: null } });
             else {
-              const value = isNew(newValue) ? newValue.split(`${ADD_LABEL} `)[1] : newValue;
-              if (isNew(newValue)) add(value);
-              onChange({ target: { value } });
+              if (user?.status === "ADMIN") {
+                const value = isNew(newValue) ? newValue.split(`${ADD_LABEL} `)[1] : newValue;
+                if (isNew(newValue)) add(value);
+                onChange({ target: { value } });
+              } else onChange({ target: { value: newValue } });
             }
           }}
           filterOptions={(options, params) => {
@@ -68,17 +74,17 @@ export default function ControlledAutocomplete({ control, name, label }: { contr
           options={options ?? []}
           renderOption={(props, option) => (
             <li {...props} style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>{option}</span>
-              {!isNew(option) && (
-                <span
+              <Typography>{option}</Typography>
+              {!isNew(option) && user?.status==="ADMIN" && (
+                <IconButton
                   onClick={e => {
                     e.stopPropagation();
                     remove(option);
                     if (option === value) onChange({ target: { value: null } });
                   }}
                 >
-                  x
-                </span>
+                  <DeleteIcon />
+                </IconButton>
               )}
             </li>
           )}

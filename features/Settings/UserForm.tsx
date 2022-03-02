@@ -43,11 +43,11 @@ export default function UserForm({ user }: any) {
               <Form.Hidden name='email' />
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="body2" sx={{ mb: "0.5rem" }} >Permessi utente</Typography>
+                <Typography variant="body2" sx={{ mb: "0.5rem" , fontSize: 10 }} >Ricarica per vedere gli effetti</Typography>
                 <Form.SelectForm name='status' fullWidth>
                   <MenuItem value={'ADMIN'}>ADMIN</MenuItem>
-                  <MenuItem value={'TECNICO'}>TECNICO</MenuItem>
                   <MenuItem value={'USER'}>USER</MenuItem>
-                  <MenuItem value={'SQUADRA'}>SQUADRA</MenuItem>
+                  <MenuItem value={'TECNICO'}>TECNICO</MenuItem>
                   <MenuItem value={'WAITING'}>WAITING</MenuItem>
                 </Form.SelectForm>
               </Box>

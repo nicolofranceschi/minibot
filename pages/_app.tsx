@@ -36,7 +36,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
 
   const router = useRouter();
-  const { setUser } = useAuth();
+
+  console.log(pageProps)
 
   return (
     <Fragment>
@@ -81,7 +82,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 <SpeedDialAction key={'add'} icon={<AddIcon />} tooltipTitle={'Nuovo elemento'} onClick={() => router.push('/')} />
                 <SpeedDialAction key={'search'} icon={<SearchIcon />} tooltipTitle={'Cerca elemento'} onClick={() => router.push('/search')} />
                 <SpeedDialAction key={'user'} icon={<AccountCircleIcon />} tooltipTitle={'Gestione utenti'} onClick={() => router.push('/user')} />
-                <SpeedDialAction key={'logout'} icon={<LogoutIcon />} tooltipTitle={'Esci'} onClick={() => { router.push('/'); logout(); setUser(null); }} />
+                <SpeedDialAction key={'logout'} icon={<LogoutIcon />} tooltipTitle={'Esci'} onClick={() => { router.push('/'); logout(); }} />
               </SpeedDial>
 
             </Box>
