@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import useDebounce from 'hooks/useDebounce';
 import { Box, Button, InputAdornment, Paper, TextField, Backdrop, CircularProgress, Typography, IconButton, Stack, Chip, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import LoadingButton from '@mui/lab/LoadingButton';
 import { AddBody } from 'features/Add/schema';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { isPdf } from 'utils/functions';
@@ -137,9 +137,9 @@ export default function Search() {
             ))}
           </Stack>
           {details.files.length > 0 && (
-            <Button onClick={() => downloadFiles(details.files)} variant='contained' sx={{ mt: 2, padding: '2rem' }}>
+            <LoadingButton loading={download.isLoading} onClick={() => downloadFiles(details.files)} variant='contained' sx={{ mt: 2, padding: '2rem' }}>
               scarica
-            </Button>)}
+            </LoadingButton>)}
         </Box>
       )}
     </Box>
