@@ -16,8 +16,8 @@ const addToArray: ArrayFunction = (arr, val) => [...arr, val];
 const removeFromArray: ArrayFunction = (arr, val) => arr.filter(v => v !== val);
 const isNew = (s: string) => s.startsWith(ADD_LABEL);
 
-export default function ControlledAutocomplete({ control, name, label }: { control: Control<any>; options: string[]; label: string; name: string }) {
-  const selectAutocompleteFromDB = ({ data }: Ret) => data?.find(o => o.id === name)?.options ?? [];
+export default function ControlledAutocomplete({ control, name, label , id }: { control: Control<any>; options: string[]; label: string; name: string , id:string }) {
+  const selectAutocompleteFromDB = ({ data }: Ret) => data?.find(o => o.id === id)?.options ?? [];
 
   const { user } = useAuth();
 
@@ -40,8 +40,8 @@ export default function ControlledAutocomplete({ control, name, label }: { contr
   const { data: options } = useQuery([QUERY_KEY], getAutoCompletes, {
     select: selectAutocompleteFromDB,
   });
-  const { mutate: add } = useMutation(data => addDataToAutoCompletes(name, data), mutationOptions(addToArray));
-  const { mutate: remove } = useMutation(data => removeDataToAutoCompletes(name, data), mutationOptions(removeFromArray));
+  const { mutate: add } = useMutation(data => addDataToAutoCompletes(id, data), mutationOptions(addToArray));
+  const { mutate: remove } = useMutation(data => removeDataToAutoCompletes(id, data), mutationOptions(removeFromArray));
 
   return (
     <Controller
@@ -89,6 +89,7 @@ export default function ControlledAutocomplete({ control, name, label }: { contr
             </li>
           )}
           freeSolo
+          sx={{flexGrow: 1}}
           renderInput={params => <TextField {...params} label={label} />}
         />
       )}

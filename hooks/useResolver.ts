@@ -4,14 +4,7 @@ import { InferType, ValidationError } from 'yup';
 import { OptionalObjectSchema } from 'yup/lib/object';
 import { TypedSchema } from 'yup/lib/util/types';
 
-type ErrorsType<T extends TypedSchema> = Partial<
-  Record<
-    keyof InferType<T>,
-    {
-      message: string;
-    }
-  >
->;
+type ErrorsType<T extends TypedSchema> = Partial<Record<keyof InferType<T>,{message: string}>> & any ; // include puntomaglia_N
 
 export default function useResolver<T extends OptionalObjectSchema<any>>(schema: T, warnings: boolean = false): [ErrorsType<T>, Resolver<InferType<T>>] {
   type Data = InferType<T>;

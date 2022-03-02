@@ -18,10 +18,10 @@ interface ItemType extends AddBody {
   files: { url: string; name?: string }[];
 }
 
-const stringFields = ['codiceArticolo', 'description', 'filato', 'puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
+const stringFields = ['codiceArticolo', 'description', 'filato', 'puntomaglia_N','puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
 const numericFields = ['altezzafinita', 'numerofili'];
 
-const propertyRegex = `(NOT\\s)?((${stringFields.join('|')}):\\w+|(${numericFields.join('|')})( = | != | > | >= | < | <= )[0-9]+)`;
+const propertyRegex = `(NOT\\s)?((${stringFields.join('|')}|puntomaglia_[0-9]+):\\w+|(${numericFields.join('|')})( = | != | > | >= | < | <= )[0-9]+)`;
 const filterRegex = `${propertyRegex}(\\s(OR|AND)\\s${propertyRegex})*`;
 
 export default function Search() {
@@ -34,6 +34,11 @@ export default function Search() {
   const [details, setDetails] = useState<ItemType | null>(null);
 
   const download = useMutation(downloadZip);
+
+  useEffect(() => {
+    if (filter !== "") return
+    setValidQuery("")
+  },[filter])
 
   const debouncedQuery = useDebounce(input);
   const { data, isLoading } = useQuery(['search', debouncedQuery, validQuery], () => algolia.search(debouncedQuery, { filters: validQuery }), {
@@ -111,7 +116,7 @@ export default function Search() {
               </Stack>
             </Paper>
           </Box>
-          <Paper sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2, mt: '260px', width: '100%' }}></Paper>
+          <Paper sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2, mt: '270px', width: '100%' }}></Paper>
           <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2, mt: '1rem' }}>
             {data &&
               data.map(
@@ -142,7 +147,8 @@ export default function Search() {
           {details.files.length > 0 && (
             <LoadingButton loading={download.isLoading} onClick={() => downloadFiles(details.files)} variant='contained' sx={{ mt: 2, padding: '2rem' }}>
               scarica
-            </LoadingButton>)}
+            </LoadingButton>
+          )}
         </Box>
       )}
     </Box>
@@ -151,8 +157,12 @@ export default function Search() {
 
 const Item = ({ item, title }: { item: any; title: string }) => (
   <Box>
-    <Typography variant='button'>{title}</Typography>
-    <Typography>{item}</Typography>
+    {!(typeof(item) === "object" || title === "undefined ") && (
+      <Fragment>
+        <Typography variant='button'>{title}</Typography>
+        <Typography variant='body2'>{item}</Typography>
+      </Fragment>
+    )}
   </Box>
 );
 
@@ -183,15 +193,20 @@ const File = ({ url, name }: { url: string; name?: string }) => {
 };
 
 const Details = ({ item }: { item: AddBody }) => (
-  <Box sx={{ padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column', gap: 1, flexGrow: 1 }}>
-    <Item {...{ item: item.codiceArticolo, title: 'Codice Articolo' }} />
-    <Item {...{ item: item.description, title: 'Descrizione' }} />
-    <Item {...{ item: item.tipofinitura, title: 'Tipo Finitura' }} />
-    <Item {...{ item: item.altezzafinita, title: 'Altezza Finita' }} />
-    <Item {...{ item: item.numerofili, title: 'Numero Fili' }} />
-    <Item {...{ item: item.rigato ? 'Si' : 'No', title: 'Rigato' }} />
-    <Item {...{ item: item.tipomaglia, title: 'Tipo Maglia' }} />
-    <Item {...{ item: item.schedadilavorazione, title: 'Scheda di lavorazione' }} />
-    <Item {...{ item: item.filato, title: 'Filato' }} />
-  </Box>
-);
+    <Box sx={{ padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column', gap: 1, flexGrow: 1 }}>
+      {Object.entries(item).map(([field, value]) => <Item key={field} {...{ item: value, title: `${titleMap[field.split("_")[0]]} ${field.split("_")[1] ?? ""}` }} />)}
+    </Box>
+  );
+
+const titleMap = {
+  codiceArticolo: "Codice Articolo",
+  description : "Descrizione",
+  tipofinitura: "Tipo Finitura",
+  altezzafinita: "Altezza Finita",
+  numerofili: "Numero Fili",
+  rigato: "Rigato",
+  tipomaglia: "Tipo Maglia",
+  puntomaglia: "Punto Maglia",
+  schedadilavorazione: "Scheda di Lavorazione",
+  filato : "Filato"
+}as any
