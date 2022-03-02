@@ -12,7 +12,7 @@ declare namespace Yup {
   type InferType = import('yup').InferType;
 }
 
-interface AnyProps extends Record<string, any> { }
+interface AnyProps extends Record<string, any> {}
 interface ChildrenProps {
   children?: React.ReactNode;
 }
@@ -115,8 +115,6 @@ interface Endpoint extends DbEntity, Pick<AppEvent, 'center' | 'place' | 'user'>
   keys: KeyData[];
 }
 
-
-
 interface Group {
   id: string;
   name?: string;
@@ -127,3 +125,8 @@ interface Group {
 type CalendarEvent = Mobi.MbscCalendarEvent & AppEvent;
 type CalendarClickEvent = Mobi.MbscEventClickEvent & { event: CalendarEvent };
 type CalendarCreateEvent = Mobi.MbscEventCreateEvent & { event: CalendarEvent };
+
+type Autocomplete = {
+  id: string;
+  options: string[];
+};

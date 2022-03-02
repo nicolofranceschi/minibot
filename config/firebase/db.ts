@@ -51,10 +51,10 @@ const groupQuery =
 
 export const addDataToGroup = (id: string, document: Partial<Group>) => modifyDocument('groups', id, document);
 
-export const addDataToAutoComplete = <T>(id: string, data: T) => tryCatcher(() => updateDoc(doc(db, 'autocomplete', id), { options: arrayUnion(data) }));
-export const removeDataToAutoComplete = <T>(id: string, data: T) => tryCatcher(() => updateDoc(doc(db, 'autocomplete', id), { options: arrayRemove(data) }));
+export const addDataToAutoCompletes = <T>(id: string, data: T) => tryCatcher(() => updateDoc(doc(db, 'autocompletes', id), { options: arrayUnion(data) }));
+export const removeDataToAutoCompletes = <T>(id: string, data: T) => tryCatcher(() => updateDoc(doc(db, 'autocompletes', id), { options: arrayRemove(data) }));
 
-export const getAutoComplete = (id: string) => getDocument<User>('autocomplete', id);
+export const getAutoCompletes = () => getCollection<Autocomplete>('autocompletes');
 
 export const getAllUsers = (group: string) => getCollection<User>('users', groupQuery(group));
 
