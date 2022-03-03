@@ -167,6 +167,7 @@ const Item = ({ item, title }: { item: any; title: string }) => (
 );
 
 const File = ({ url, name }: { url: string; name?: string }) => {
+  
   const [pdf, setPdf] = useState<any>();
 
   useEffect(() => {
@@ -208,5 +209,8 @@ const titleMap = {
   tipomaglia: "Tipo Maglia",
   puntomaglia: "Punto Maglia",
   schedadilavorazione: "Scheda di Lavorazione",
-  filato : "Filato"
+  filato : "Filato",
+  piedino: "Piedino",
+  flessage: "Flessage",
+  numerocalati: "Numero Calati"
 }as any

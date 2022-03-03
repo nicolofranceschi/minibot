@@ -9,9 +9,7 @@ export function ErrorBox({ children, label, error, warnings }: ChildrenProps & {
     return (
         <Paper elevation={4} sx={{ padding: '1rem', display: 'flex ', gap: 2, flexDirection: "column", borderRadius: '1rem', flexGrow: 2, width: 300 }}>
             <Stack direction="row" alignItems='center' sx={{ gap: 2 }}>
-                <Box>
-                    {error ? <RedPulse /> : warnings ? <OrangePulse /> : null}
-                </Box>
+                {error ? <RedPulse /> : warnings ? <OrangePulse /> : null}
                 <Typography variant="button">{label}</Typography>
             </Stack>
             {children}
@@ -20,10 +18,24 @@ export function ErrorBox({ children, label, error, warnings }: ChildrenProps & {
     );
 }
 
+export function ErrorAcordion({ children, label, error, warnings }: ChildrenProps & { label: string; error?: string; warnings?: string; }) {
+
+    return (
+        <Box sx={{ display: 'flex ', gap: 2, flexDirection: "column", borderRadius: '1rem', flexGrow: 2 }}>
+            <Stack direction="row" alignItems='center' sx={{ gap: 2 }}>
+                {error ? <RedPulse /> : warnings ? <OrangePulse /> : null}
+                <Typography variant="button">{label}</Typography>
+            </Stack>
+            {children}
+            {error ? <Typography variant="caption" color="error">{error}</Typography> : warnings ? <Typography variant="caption" color="rgba(255, 121, 63, 1)">{warnings}</Typography> : <Typography variant="caption" color="green">OK !</Typography>}
+        </Box>
+    );
+}
+
 export function ErrorBoxNoPaper({ children, label, error, warnings, id }: ChildrenProps & { label: string; error?: string; warnings?: string; id: number }) {
 
     return (
-        <Stack direction="column" sx={{ gap: 2 , width: "100%" }}>
+        <Stack direction="column" sx={{ gap: 2, width: "100%" }}>
             <Stack direction="row" alignItems='center' sx={{ gap: 2 }}>
                 <Typography>{id}</Typography>
                 {children}
