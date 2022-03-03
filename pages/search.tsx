@@ -18,8 +18,8 @@ interface ItemType extends AddBody {
   files: { url: string; name?: string }[];
 }
 
-const stringFields = ['codiceArticolo', 'description', 'filato', 'puntomaglia_N','puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
-const numericFields = ['altezzafinita', 'numerofili'];
+const stringFields = ['codiceArticolo', 'description', 'filato', 'flessage','piedino', 'puntomaglia_N','puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
+const numericFields = ['altezzafinita','numerocalati', 'numerofili'];
 
 const propertyRegex = `(NOT\\s)?((${stringFields.join('|')}|puntomaglia_[0-9]+):\\w+|(${numericFields.join('|')})( = | != | > | >= | < | <= )[0-9]+)`;
 const filterRegex = `${propertyRegex}(\\s(OR|AND)\\s${propertyRegex})*`;
@@ -167,7 +167,7 @@ const Item = ({ item, title }: { item: any; title: string }) => (
 );
 
 const File = ({ url, name }: { url: string; name?: string }) => {
-  
+
   const [pdf, setPdf] = useState<any>();
 
   useEffect(() => {
