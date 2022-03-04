@@ -5,7 +5,7 @@ import useDebounce from 'hooks/useDebounce';
 import { Box, Button, InputAdornment, Paper, TextField, Backdrop, CircularProgress, Typography, IconButton, Stack, Chip, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { AddBody } from 'features/Add/schema';
+import { Scheda } from 'features/Add/schema';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { isPdf } from 'utils/functions';
 import downloadZip from 'config/downloadZip';
@@ -14,12 +14,12 @@ import { motion } from 'framer-motion';
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
 
-interface ItemType extends AddBody {
+interface ItemType extends Scheda {
   files: { url: string; name?: string }[];
 }
 
-const stringFields = ['codiceArticolo', 'description', 'filato', 'flessage','piedino', 'puntomaglia_N','puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
-const numericFields = ['altezzafinita','numerocalati', 'numerofili'];
+const stringFields = ['codiceArticolo', 'description', 'filato', 'flessage', 'piedino', 'puntomaglia_N', 'puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
+const numericFields = ['altezzafinita', 'numerocalati', 'numerofili'];
 
 const propertyRegex = `(NOT\\s)?((${stringFields.join('|')}|puntomaglia_[0-9]+):\\w+|(${numericFields.join('|')})( = | != | > | >= | < | <= )[0-9]+)`;
 const filterRegex = `${propertyRegex}(\\s(OR|AND)\\s${propertyRegex})*`;
@@ -36,9 +36,9 @@ export default function Search() {
   const download = useMutation(downloadZip);
 
   useEffect(() => {
-    if (filter !== "") return
-    setValidQuery("")
-  },[filter])
+    if (filter !== '') return;
+    setValidQuery('');
+  }, [filter]);
 
   const debouncedQuery = useDebounce(input);
   const { data, isLoading } = useQuery(['search', debouncedQuery, validQuery], () => algolia.search(debouncedQuery, { filters: validQuery }), {
@@ -61,7 +61,7 @@ export default function Search() {
       </Backdrop>
       {!details && (
         <Fragment>
-          <Box sx={{ position: 'fixed', width: '100%', top: 0, left: 0, padding: '1rem', backdropFilter: 'blur(10px)', overflow: "hidden" }}>
+          <Box sx={{ position: 'fixed', width: '100%', top: 0, left: 0, padding: '1rem', backdropFilter: 'blur(10px)', overflow: 'hidden' }}>
             <Paper sx={{ padding: '1rem', borderRadius: '1rem', display: 'flex', gap: 2, flexDirection: 'column' }}>
               <TextField
                 fullWidth
@@ -76,43 +76,48 @@ export default function Search() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
               />
-              <Box sx={{ overflow: 'hidden', width: "100%", borderRadius: '1rem' }}>
-                <motion.div drag='x' dragConstraints={{ right: 0, left: -offset, }}>
+              <Box sx={{ overflow: 'hidden', width: '100%', borderRadius: '1rem' }}>
+                <motion.div drag='x' dragConstraints={{ right: 0, left: -offset }}>
                   <Stack flexDirection='row' ref={ref} alignItems='flex-start' sx={{ gap: 1 }}>
-                    <Chip label="AND" onDelete={() => setFilter(e => e.concat(" AND "))} deleteIcon={<AddIcon />} />
-                    <Chip label="OR" onDelete={() => setFilter(e => e.concat(" OR "))} deleteIcon={<AddIcon />} />
-                    <Chip label="NOT" onDelete={() => setFilter(e => e.concat(" NOT "))} deleteIcon={<AddIcon />} />
+                    <Chip label='AND' onDelete={() => setFilter(e => e.concat(' AND '))} deleteIcon={<AddIcon />} />
+                    <Chip label='OR' onDelete={() => setFilter(e => e.concat(' OR '))} deleteIcon={<AddIcon />} />
+                    <Chip label='NOT' onDelete={() => setFilter(e => e.concat(' NOT '))} deleteIcon={<AddIcon />} />
                     {stringFields.map(field => (
-                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field + ":"))} deleteIcon={<AddIcon />} />
+                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field + ':'))} deleteIcon={<AddIcon />} />
                     ))}
                     {numericFields.map(field => (
-                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field + " = "))} deleteIcon={<AddIcon />} />
+                      <Chip key={field} label={field} onDelete={() => setFilter(e => e.concat(field + ' = '))} deleteIcon={<AddIcon />} />
                     ))}
                   </Stack>
                 </motion.div>
               </Box>
-              <TextField
-                fullWidth
-                placeholder='QUERY'
-                value={filter}
-                onChange={e => setFilter(e.target.value)}
-              />
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Stack direction="row" alignItems="center" sx={{ gap: 0.5 }}>
-                  <Tooltip title={
-                    <Fragment>
-                      <Typography variant="button" sx={{ fontSize: 10 }} >PARAMETER SYNTAX</Typography>
-                      <Typography variant="body2" sx={{ fontSize: 10 }} >attribute:value [AND | OR | NOT] attribute:value</Typography>
-                      <Typography variant="body2" sx={{ fontSize: 10 }} >{"numeric_attribute [= | != | > | >= | < | <=] numeric_value"}</Typography>
-                    </Fragment>
-                  }>
-                    <IconButton >
-                      <InfoIcon sx={{ height: "15px", width: "15px" }} />
+              <TextField fullWidth placeholder='QUERY' value={filter} onChange={e => setFilter(e.target.value)} />
+              <Stack direction='row' justifyContent='space-between' alignItems='center'>
+                <Stack direction='row' alignItems='center' sx={{ gap: 0.5 }}>
+                  <Tooltip
+                    title={
+                      <Fragment>
+                        <Typography variant='button' sx={{ fontSize: 10 }}>
+                          PARAMETER SYNTAX
+                        </Typography>
+                        <Typography variant='body2' sx={{ fontSize: 10 }}>
+                          attribute:value [AND | OR | NOT] attribute:value
+                        </Typography>
+                        <Typography variant='body2' sx={{ fontSize: 10 }}>
+                          {'numeric_attribute [= | != | > | >= | < | <=] numeric_value'}
+                        </Typography>
+                      </Fragment>
+                    }
+                  >
+                    <IconButton>
+                      <InfoIcon sx={{ height: '15px', width: '15px' }} />
                     </IconButton>
                   </Tooltip>
                   {isError ? <span style={{ color: 'red' }}>La query è sbagliata</span> : <span style={{ color: 'green' }}>Ok !</span>}
                 </Stack>
-                <Button disabled={isError} onClick={() => setValidQuery(filter)}>FILTRA</Button>
+                <Button disabled={isError} onClick={() => setValidQuery(filter)}>
+                  FILTRA
+                </Button>
               </Stack>
             </Paper>
           </Box>
@@ -157,7 +162,7 @@ export default function Search() {
 
 const Item = ({ item, title }: { item: any; title: string }) => (
   <Box>
-    {!(typeof(item) === "object" || title === "undefined ") && (
+    {!(typeof item === 'object' || title === 'undefined ') && (
       <Fragment>
         <Typography variant='button'>{title}</Typography>
         <Typography variant='body2'>{item}</Typography>
@@ -167,7 +172,6 @@ const Item = ({ item, title }: { item: any; title: string }) => (
 );
 
 const File = ({ url, name }: { url: string; name?: string }) => {
-
   const [pdf, setPdf] = useState<any>();
 
   useEffect(() => {
@@ -181,7 +185,9 @@ const File = ({ url, name }: { url: string; name?: string }) => {
 
   return (
     <Paper elevation={4} sx={{ borderRadius: '1rem', flexGrow: 1, height: '30vh', width: 300, maxWidth: 400, display: 'flex', flexDirection: 'column' }} onClick={() => window.open(url, '_blank')}>
-      <Typography sx={{ padding: '1rem' }} variant="button">{name ?? "Unknown"}</Typography>
+      <Typography sx={{ padding: '1rem' }} variant='button'>
+        {name ?? 'Unknown'}
+      </Typography>
       {pdf ? (
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', flexGrow: 1 }}>
           <Typography variant='h4'>{pdf}</Typography>
@@ -193,24 +199,26 @@ const File = ({ url, name }: { url: string; name?: string }) => {
   );
 };
 
-const Details = ({ item }: { item: AddBody }) => (
-    <Box sx={{ padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column', gap: 1, flexGrow: 1 }}>
-      {Object.entries(item).map(([field, value]) => <Item key={field} {...{ item: value, title: `${titleMap[field.split("_")[0]]} ${field.split("_")[1] ?? ""}` }} />)}
-    </Box>
-  );
+const Details = ({ item }: { item: Scheda }) => (
+  <Box sx={{ padding: '1rem', borderRadius: '1rem', display: 'flex', flexDirection: 'column', gap: 1, flexGrow: 1 }}>
+    {Object.entries(item).map(([field, value]) => (
+      <Item key={field} {...{ item: value, title: `${titleMap[field.split('_')[0]]} ${field.split('_')[1] ?? ''}` }} />
+    ))}
+  </Box>
+);
 
 const titleMap = {
-  codiceArticolo: "Codice Articolo",
-  description : "Descrizione",
-  tipofinitura: "Tipo Finitura",
-  altezzafinita: "Altezza Finita",
-  numerofili: "Numero Fili",
-  rigato: "Rigato",
-  tipomaglia: "Tipo Maglia",
-  puntomaglia: "Punto Maglia",
-  schedadilavorazione: "Scheda di Lavorazione",
-  filato : "Filato",
-  piedino: "Piedino",
-  flessage: "Flessage",
-  numerocalati: "Numero Calati"
-}as any
+  codiceArticolo: 'Codice Articolo',
+  description: 'Descrizione',
+  tipofinitura: 'Tipo Finitura',
+  altezzafinita: 'Altezza Finita',
+  numerofili: 'Numero Fili',
+  rigato: 'Rigato',
+  tipomaglia: 'Tipo Maglia',
+  puntomaglia: 'Punto Maglia',
+  schedadilavorazione: 'Scheda di Lavorazione',
+  filato: 'Filato',
+  piedino: 'Piedino',
+  flessage: 'Flessage',
+  numerocalati: 'Numero Calati',
+} as any;

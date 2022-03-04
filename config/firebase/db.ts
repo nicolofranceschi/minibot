@@ -16,7 +16,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from '@firebase/firestore';
-import { AddBody } from 'features/Add/schema';
+import { Scheda } from 'features/Add/schema';
 
 import { removeEmpty, tryCatcher } from 'utils/functions';
 
@@ -58,9 +58,11 @@ export const getAutoCompletes = () => getCollection<Autocomplete>('autocompletes
 
 export const getAllUsers = (group: string) => getCollection<User>('users', groupQuery(group));
 
+export const getScheda = (id: string) => getDocument<Scheda>('schede', id);
+
 export const createUser = (id: string, document: User) => modifyDocument('users', id, document);
 
-export const createScheda = (document: AddBody) => createDocument('schede', document);
+export const createScheda = (document: Scheda) => createDocument('schede', document);
 
 export const addDataToScheda = (id: string, document: any) => modifyDocument('schede', id, document);
 

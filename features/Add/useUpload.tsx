@@ -1,10 +1,8 @@
 import { getDownloadURL } from '@firebase/storage';
 import { addDataToScheda, createScheda } from 'config/firebase/db';
 import { upload } from 'config/firebase/storage';
-import { AddBody } from 'features/Add/schema';
-import { Router, useRouter } from 'next/router';
+import { Scheda } from 'features/Add/schema';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 import { useMutation } from 'react-query';
 
 interface FileArray {
@@ -12,17 +10,14 @@ interface FileArray {
   name: string | undefined;
 }
 
-export const useUpload = () => {
-
-  const router = useRouter()
-
+export const useUpload = (onSuccess: () => void) => {
   const [percent, setPercent] = useState<number>(0);
   const saveFile = useMutation(({ files, name }: { files: PreviewableFile[]; name: string }) => Promise.all(files.map(({ file }, i) => upload({ file, name: name + '/' + i, setPercent }))));
   const getUrl = useMutation((res: Awaited<ReturnType<typeof upload>>[]) => Promise.all(res.map(metadata => getDownloadURL(metadata.ref))));
-  const saveScheda = useMutation((form: AddBody) => createScheda(form));
+  const saveScheda = useMutation((form: Scheda) => createScheda(form));
   const addUrlToEvent = useMutation(({ id, data }: { id: string; data: FileArray[] }) => addDataToScheda(id, { files: data }));
 
-  const carica = ({ data, files }: { data: AddBody; files: PreviewableFile[] }) => {
+  const carica = ({ data, files }: { data: Scheda; files: PreviewableFile[] }) => {
     if (!data) return;
 
     saveScheda.mutate(data, {
@@ -38,10 +33,7 @@ export const useUpload = () => {
                   addUrlToEvent.mutate(
                     { id: data.id ?? '', data: fileArray },
                     {
-                      onSuccess: () => {
-                        toast.success("Scheda Aggiunta");
-                        router.reload();
-                      }
+                      onSuccess,
                     },
                   );
                 },

@@ -1,5 +1,5 @@
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
-import { AddBody } from 'features/Add/schema';
+import { Scheda } from 'features/Add/schema';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useMutation } from 'react-query';

@@ -16,7 +16,7 @@ const addToArray: ArrayFunction = (arr, val) => [...arr, val];
 const removeFromArray: ArrayFunction = (arr, val) => arr.filter(v => v !== val);
 const isNew = (s: string) => s.startsWith(ADD_LABEL);
 
-export default function ControlledAutocomplete({ control, name, label , id }: { control: Control<any>; options: string[]; label: string; name: string , id:string }) {
+export default function ControlledAutocomplete({ control, name, label, id }: { control: Control<any>; label: string; name: string; id: string }) {
   const selectAutocompleteFromDB = ({ data }: Ret) => data?.find(o => o.id === id)?.options ?? [];
 
   const { user } = useAuth();
@@ -53,7 +53,7 @@ export default function ControlledAutocomplete({ control, name, label , id }: { 
           onChange={(_, newValue) => {
             if (!newValue) onChange({ target: { value: null } });
             else {
-              if (user?.status === "ADMIN") {
+              if (user?.status === 'ADMIN') {
                 const value = isNew(newValue) ? newValue.split(`${ADD_LABEL} `)[1] : newValue;
                 if (isNew(newValue)) add(value);
                 onChange({ target: { value } });
@@ -75,7 +75,7 @@ export default function ControlledAutocomplete({ control, name, label , id }: { 
           renderOption={(props, option) => (
             <li {...props} style={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography>{option}</Typography>
-              {!isNew(option) && user?.status==="ADMIN" && (
+              {!isNew(option) && user?.status === 'ADMIN' && (
                 <IconButton
                   onClick={e => {
                     e.stopPropagation();
@@ -89,7 +89,7 @@ export default function ControlledAutocomplete({ control, name, label , id }: { 
             </li>
           )}
           freeSolo
-          sx={{flexGrow: 1}}
+          sx={{ flexGrow: 1 }}
           renderInput={params => <TextField {...params} label={label} />}
         />
       )}
