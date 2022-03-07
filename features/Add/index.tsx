@@ -1,5 +1,5 @@
 import { TextField, Button, CircularProgress, Backdrop, Stack, Paper, Typography, RadioGroup, Radio, AccordionSummary, AccordionDetails, Divider } from '@mui/material';
-import { useForm, Controller, useWatch } from 'react-hook-form';
+import { useForm, Controller, useWatch, useFieldArray } from 'react-hook-form';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { ErrorBox, ErrorBoxNoPaper, ErrorAcordion } from './ErrorBox';
 import ControlledAutocomplete from 'components/ControlledAutocomplete';
@@ -15,8 +15,9 @@ import { Accordion } from 'components/Acordion';
 
 const formStyle = { padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' } as const;
 
-export default function Add({ data }: { data?: Scheda }) {
-  const [schema, setSchema] = useState({ warnings: warningsObject, errors: errorsObject, Npuntomaglia: 0 });
+export default function Add({ dataFirebase }: { dataFirebase?: any }) {
+
+  const [schema, setSchema] = useState({ warnings: warningsObject, errors: errorsObject, Npuntomaglia: dataFirebase?.Npuntomaglia ?? 0 });
 
   const [warnings, warningsResolver] = useResolver(object(schema.warnings), true);
   const [errors, errorsResolver] = useResolver(object(schema.errors));
@@ -27,7 +28,7 @@ export default function Add({ data }: { data?: Scheda }) {
     mode: 'onChange',
     shouldUnregister: true,
     resolver: aggregateResolvers(warningsResolver, errorsResolver),
-    defaultValues: data ?? { rigato: 'non rigato' },
+    defaultValues: dataFirebase ?? { rigato: 'non rigato' },
   });
 
   const tipofinitura = useWatch({
@@ -40,14 +41,17 @@ export default function Add({ data }: { data?: Scheda }) {
     else setSchema(e => ({ ...e, errors: errorsObject }));
   }, [tipofinitura]);
 
-  const { carica, isLoading } = useUpload(() => {
+  const { carica, modifica, isLoading } = useUpload(() => {
+    setSchema({ warnings: warningsObject, errors: errorsObject, Npuntomaglia: dataFirebase?.Npuntomaglia ?? 0 });
     reset();
     filesProps.resetFiles();
   });
 
+  console.log(dataFirebase)
+
   const onSubmit = async (data: Scheda) => {
-    console.log(data, warnings, errors);
-    carica({ data, files: filesProps.files });
+    if (dataFirebase) modifica({ data, files: filesProps.files , Npuntomaglia: schema.Npuntomaglia , id : dataFirebase.id , lengths : dataFirebase.files?.length , previousFiles: dataFirebase.files  })
+    else carica({ data, files: filesProps.files , Npuntomaglia: schema.Npuntomaglia });
   };
 
   const addPuntomaglia = () => {
@@ -64,11 +68,17 @@ export default function Add({ data }: { data?: Scheda }) {
         <CircularProgress color='inherit' />
       </Backdrop>
       <Stack direction='row' sx={{ flexWrap: 'wrap', gap: 1 }}>
+        <ErrorBox label='Scheda di lavorazione' error={errors.schedadilavorazione?.message} warnings={warnings.schedadilavorazione?.message}>
+          <TextField id='schedadilavorazione' variant='outlined' placeholder='4 cifre' {...register('schedadilavorazione')} />
+        </ErrorBox>
+        <ErrorBox label='Tipo Maglia' error={errors.tipomaglia?.message} warnings={warnings.tipomaglia?.message}>
+          <ControlledAutocomplete {...{ control, label: 'Seleziona Tipo Maglia', name: 'tipomaglia', id: 'tipomaglia' }} />
+        </ErrorBox>
         <ErrorBox label='Codice articolo' error={errors.codiceArticolo?.message} warnings={warnings.codiceArticolo?.message}>
           <TextField id='id' variant='outlined' placeholder='Campo alfanumerico' {...register('codiceArticolo')} />
         </ErrorBox>
-        <ErrorBox label='Note' error={errors.description?.message} warnings={warnings.description?.message}>
-          <TextField multiline rows={6} id='description' variant='outlined' placeholder='Campo alfanumerico' {...register('description')} />
+      <ErrorBox label='Cliente' error={errors.cliente?.message} warnings={warnings.cliente?.message}>
+          <ControlledAutocomplete {...{ control, label: 'Seleziona Cliente', name: 'cliente', id: 'cliente' }} />
         </ErrorBox>
         <ErrorBox label='Tipo Finitura' error={errors.tipofinitura?.message} warnings={warnings.tipofinitura?.message}>
           <ControlledAutocomplete {...{ control, label: 'Seleziona Tipo Finitura', name: 'tipofinitura', id: 'tipofinitura' }} />
@@ -88,6 +98,9 @@ export default function Add({ data }: { data?: Scheda }) {
         <ErrorBox label='Altezza finita' error={errors.altezzafinita?.message} warnings={warnings.altezzafinita?.message}>
           <TextField id='altezzafinita' variant='outlined' placeholder='Numero da 1 a 50' {...register('altezzafinita')} />
         </ErrorBox>
+        <ErrorBox label='Filato' error={errors.filato?.message} warnings={warnings.filato?.message}>
+          <ControlledAutocomplete {...{ control, label: 'Seleziona Tipo filato', name: 'filato', id: 'filato' }} />
+        </ErrorBox>
         <ErrorBox label='Numero fili' error={errors.numerofili?.message} warnings={warnings.numerofili?.message}>
           <TextField id='numerofili' variant='outlined' type='number' placeholder='Numero intero da 1 a 10' {...register('numerofili')} />
         </ErrorBox>
@@ -103,14 +116,8 @@ export default function Add({ data }: { data?: Scheda }) {
             )}
           />
         </ErrorBox>
-        <ErrorBox label='Tipo Maglia' error={errors.tipomaglia?.message} warnings={warnings.tipomaglia?.message}>
-          <ControlledAutocomplete {...{ control, label: 'Seleziona Tipo Maglia', name: 'tipomaglia', id: 'tipomaglia' }} />
-        </ErrorBox>
-        <ErrorBox label='Scheda di lavorazione' error={errors.schedadilavorazione?.message} warnings={warnings.schedadilavorazione?.message}>
-          <TextField id='schedadilavorazione' variant='outlined' placeholder='4 cifre' {...register('schedadilavorazione')} />
-        </ErrorBox>
-        <ErrorBox label='Filato' error={errors.filato?.message} warnings={warnings.filato?.message}>
-          <ControlledAutocomplete {...{ control, label: 'Seleziona Tipo filato', name: 'filato', id: 'filato' }} />
+        <ErrorBox label='Note' error={errors.description?.message} warnings={warnings.description?.message}>
+          <TextField multiline rows={6} id='description' variant='outlined' placeholder='Campo alfanumerico' {...register('description')} />
         </ErrorBox>
         {tipofinitura === 'collo calato' && (
           <Accordion sx={{ flexGrow: 1, borderRadius: '1rem', padding: '1rem', mt: 0 }}>
@@ -152,7 +159,7 @@ export default function Add({ data }: { data?: Scheda }) {
       </Stack>
       <FileBlock {...filesProps} />
       <Button variant='contained' type='submit' sx={{ padding: '1rem', width: 'calc(100% - 70px)', borderRadius: '1rem' }}>
-        SALVA
+        {dataFirebase ? "MODIFICA" : "SALVA"}
       </Button>
     </form>
   );

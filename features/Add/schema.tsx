@@ -4,6 +4,7 @@ export const warningsObject = {
   codiceArticolo: string().required('Il campo è obbligatorio'),
   description: string(),
   tipofinitura: string().required('Il campo è obbligatorio').nullable(),
+  cliente: string().required('Il campo è obbligatorio').nullable(),
   rigato: string().required('Il campo è obbligatorio'),
   puntomaglia_1: string().required('Il campo è obbligatorio').nullable(),
   altezzafinita: number().typeError('Il campo deve essere un numero').positive('Il campo deve essere maggiore di 0').required('Il campo è obbligatorio').max(50, 'Il campo deve essere minore di 50'),
@@ -13,6 +14,7 @@ export const warningsObject = {
     .integer('Il campo deve essere un numero intero')
     .required('Il campo è obbligatorio')
     .max(10, 'Il campo deve essere minore di 10'),
+  Npuntomaglia: number(),
   numerocalati: number().typeError('Il campo deve essere un numero').positive('Il campo deve essere maggiore di 0').integer('Il campo deve essere un numero intero'),
   piedino: string().required('Il campo è obbligatorio'),
   flessage: string().required('Il campo è obbligatorio'),
@@ -28,6 +30,7 @@ export const errorsObject = {
   description: string(),
   tipofinitura: string().required('Il campo è obbligatorio').nullable(),
   rigato: string().required('Il campo è obbligatorio'),
+  cliente: string().required('Il campo è obbligatorio').nullable(),
   puntomaglia_1: string().required('Il campo è obbligatorio').nullable(),
   altezzafinita: number().typeError('Il campo deve essere un numero').required('Il campo è obbligatorio'),
   numerofili: number().typeError('Il campo deve essere un numero').required('Il campo è obbligatorio'),

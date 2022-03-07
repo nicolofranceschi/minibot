@@ -10,5 +10,5 @@ export default function Edit() {
   if (isLoading) return <span>Caricamento...</span>;
   if (!data) return <span>404: Scheda non trovata</span>;
   console.log('edit', data);
-  return <Add data={data} />;
+  return <Add dataFirebase={data} />;
 }

@@ -20,6 +20,7 @@ import { Scheda } from 'features/Add/schema';
 
 import { removeEmpty, tryCatcher } from 'utils/functions';
 
+
 export const db = getFirestore();
 
 // TODO: policy: https://firebase.google.com/docs/firestore/quickstart#secure_your_data
@@ -56,6 +57,8 @@ export const removeDataToAutoCompletes = <T>(id: string, data: T) => tryCatcher(
 
 export const getAutoCompletes = () => getCollection<Autocomplete>('autocompletes');
 
+export const addFileToScheda = <T>(id: string, data: T) => tryCatcher(() => updateDoc(doc(db, 'schede', id), { files: arrayUnion({...data}) }));
+
 export const getAllUsers = (group: string) => getCollection<User>('users', groupQuery(group));
 
 export const getScheda = (id: string) => getDocument<Scheda>('schede', id);
@@ -71,3 +74,5 @@ export const getUser = (id: string) => getDocument<User>('users', id);
 export const getGroup = (id: string) => getDocument<Group>('groups', id);
 
 export const addDataToUser = (id: string, document: Partial<User>) => modifyDocument('users', id, document);
+
+

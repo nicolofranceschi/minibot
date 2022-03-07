@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import algolia from 'config/algolia';
 import { Fragment, useEffect, useState } from 'react';
 import useDebounce from 'hooks/useDebounce';
@@ -13,12 +13,17 @@ import useOffset from 'hooks/useOffset';
 import { motion } from 'framer-motion';
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
+import EditIcon from '@mui/icons-material/Edit';
+import { useRouter } from 'next/router';
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from 'config/firebase/db';
 
 interface ItemType extends Scheda {
+  path: string;
   files: { url: string; name?: string }[];
 }
 
-const stringFields = ['codiceArticolo', 'description', 'filato', 'flessage', 'piedino', 'puntomaglia_N', 'puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
+const stringFields = ['codiceArticolo', 'description', 'cliente', 'filato', 'flessage', 'piedino', 'puntomaglia_N', 'puntomaglia', 'rigato', 'tipomaglia', 'schedadilavorazione', 'tipofinitura'];
 const numericFields = ['altezzafinita', 'numerocalati', 'numerofili'];
 
 const propertyRegex = `(NOT\\s)?((${stringFields.join('|')}|puntomaglia_[0-9]+):\\w+|(${numericFields.join('|')})( = | != | > | >= | < | <= )[0-9]+)`;
@@ -33,6 +38,8 @@ export default function Search() {
 
   const [details, setDetails] = useState<ItemType | null>(null);
 
+  const router = useRouter();
+
   const download = useMutation(downloadZip);
 
   useEffect(() => {
@@ -46,6 +53,7 @@ export default function Search() {
     onSuccess: hits => console.log(hits),
   });
 
+  
   const downloadFiles = async (files: { url: string; name?: string }[]) => {
     download.mutate(files, {
       onSuccess: res => console.log(res),
@@ -53,6 +61,8 @@ export default function Search() {
   };
 
   const { ref, offset } = useOffset();
+
+  console.log(details)
 
   return (
     <Box sx={{ padding: '1rem' }}>
@@ -140,6 +150,9 @@ export default function Search() {
       )}
       {details && (
         <Box>
+          <IconButton sx={{ position: "absolute", right: "1rem", top: "1rem" }} onClick={() => router.push(`/${details.path.split('/')[1]}`)}>
+            <EditIcon />
+          </IconButton>
           <IconButton onClick={() => setDetails(null)}>
             <ArrowBackIosNewIcon />
           </IconButton>
@@ -220,5 +233,6 @@ const titleMap = {
   filato: 'Filato',
   piedino: 'Piedino',
   flessage: 'Flessage',
+  cliente: 'Cliente',
   numerocalati: 'Numero Calati',
 } as any;
