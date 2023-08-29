@@ -72,5 +72,6 @@ export function AuthProvider({ children }: ChildrenProps) {
     [user, login, signup, logout, reset],
   );
 
-  return <AuthContext.Provider value={value}>{user ? user.status === 'WAITING' ? <Waiting /> : children : isLoading ? <Loading /> : <Auth />}</AuthContext.Provider>;
+  //return <AuthContext.Provider value={value}>{user ? user.status === 'WAITING' ? <Waiting /> : children : isLoading ? <Loading /> : <Auth />}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import algolia from 'config/algolia';
 import { Fragment, useEffect, useState } from 'react';
 import useDebounce from 'hooks/useDebounce';
@@ -15,8 +15,6 @@ import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
 import { useRouter } from 'next/router';
-import { collection, onSnapshot } from "firebase/firestore";
-import { db } from 'config/firebase/db';
 
 interface ItemType extends Scheda {
   path: string;
